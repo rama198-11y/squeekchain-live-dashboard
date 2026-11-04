@@ -3,239 +3,254 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<title>Squeekchain Live Dashboard</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Squeekchain Pro Dashboard</title>
 <style>
+:root{
+ --bg:#080d19;--panel:#111a2c;--panel2:#17233a;
+ --line:#263651;--text:#edf3ff;--muted:#91a2c0;
+ --blue:#6585ff;--cyan:#39d5d0;--green:#42d99a;
+ --orange:#ffbd69;--red:#ff7777
+}
 *{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#edf2ff;font-family:Arial,sans-serif}
-header{padding:24px 18px;background:#121a30;border-bottom:1px solid #27324c}
-h1{font-size:23px;margin:0 0 8px}
-.sub{color:#9eacc8;font-size:13px}
-main{max-width:950px;margin:auto;padding:18px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
-button{background:#536dfe;color:white;border:0;padding:11px 16px;border-radius:9px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.copy{background:#243653;border:1px solid #394c70}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.card{background:#151e34;border:1px solid #293653;border-radius:13px;padding:16px;min-width:0}
-.card h3{font-size:13px;color:#9eacc8;margin:0 0 13px;font-weight:normal}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{padding:22px 18px;background:linear-gradient(120deg,#121d35,#10172a);border-bottom:1px solid var(--line)}
+.head{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font-size:22px;margin:0 0 7px}
+.sub,.muted{color:var(--muted);font-size:12px}
+main{max-width:1100px;margin:auto;padding:18px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+button,select{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:10px 13px;border-radius:9px}
+button{background:#526fff;border:0;font-weight:bold;cursor:pointer}
+button:active{opacity:.7}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid var(--line);border-radius:20px;font-size:12px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--orange)}
+.dot.green{background:var(--green)}
+.dot.red{background:var(--red)}
+.section{font-size:16px;margin:25px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.card h3{font-size:12px;color:var(--muted);font-weight:normal;margin:0 0 12px}
 .value{font-size:23px;font-weight:bold;overflow-wrap:anywhere}
-.small{font-size:12px;color:#9eacc8;margin-top:8px;overflow-wrap:anywhere}
-.section{margin:24px 0 12px;font-size:17px}
-.status{display:inline-block;padding:5px 9px;border-radius:20px;background:#293653;font-size:12px}
-.ok{color:#67e5a2}.bad{color:#ff9c9c}
-.change{font-size:11px;margin-top:7px;color:#9eacc8}
-.up{color:#67e5a2}.down{color:#ff9c9c}
-.event{padding:12px 0;border-bottom:1px solid #293653;font-size:13px}
+.small{font-size:11px;color:var(--muted);margin-top:8px;overflow-wrap:anywhere;line-height:1.5}
+.icon{font-size:19px;margin-bottom:10px}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.chart-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.chart-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.chart-head h3{font-size:14px;margin:0}
+canvas{width:100%;height:220px;display:block;margin-top:15px}
+.chart-note{font-size:11px;color:var(--muted);margin-top:8px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.pipeline .card{padding:15px}
+.state{font-size:14px;font-weight:bold}
+.event{padding:13px 0;border-bottom:1px solid var(--line);font-size:13px}
 .event:last-child{border:0}
-.warning{display:none;padding:12px 14px;background:#39242b;border:1px solid #75404b;color:#ffb2bd;border-radius:10px;font-size:12px;margin:14px 0}
-footer{text-align:center;color:#7f8eaa;padding:25px;font-size:12px}
-@media(max-width:480px){.grid{grid-template-columns:1fr}.value{font-size:21px}}
+.event strong{color:#dce6ff}
+.event .small{margin-top:5px}
+.progress{height:7px;background:#26334c;border-radius:10px;margin-top:12px;overflow:hidden}
+.progress span{height:100%;display:block;background:linear-gradient(90deg,var(--blue),var(--cyan));width:0}
+footer{text-align:center;color:#72829f;font-size:11px;padding:28px 10px}
+@media(max-width:760px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pipeline{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .chart-grid{grid-template-columns:1fr}
+ .stats-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:390px){
+ main{padding:12px}
+ .value{font-size:19px}
+ .card{padding:13px}
+}
 </style>
 </head>
-
 <body>
+
 <header>
-<h1>🐭 Squeekchain Live Dashboard</h1>
-<div class="sub">Live Network Monitor · Official Public API</div>
+<div class="head">
+ <div>
+  <h1>🐭 Squeekchain Pro</h1>
+  <div class="sub">LIVE NETWORK ANALYTICS & MONITORING</div>
+ </div>
+ <div class="pill"><span class="dot" id="headDot"></span><span id="headStatus">Connecting</span></div>
+</div>
 </header>
 
 <main>
 
-<div class="top">
-<div>
-<span class="status" id="connection">Connecting...</span>
-<div class="small" id="updated">Waiting for API...</div>
-<div class="small" id="lastSuccess">Last successful response: —</div>
+<div class="toolbar">
+ <div>
+  <div style="font-weight:bold">Network Control Center</div>
+  <div class="small" id="updated">Waiting for API...</div>
+ </div>
+ <button onclick="refreshLive()">↻ Refresh</button>
 </div>
-<div class="actions">
-<button id="refresh" onclick="loadAll()">↻ Refresh</button>
-<button class="copy" onclick="copyReport()">Copy Report</button>
-</div>
-</div>
-
-<div class="warning" id="warning"></div>
 
 <h2 class="section">Network Overview</h2>
-
 <div class="grid">
-
-<div class="card">
-<h3>Network</h3>
-<div class="value" id="network">—</div>
-<div class="small" id="chainid">Chain ID: —</div>
+ <div class="card">
+  <div class="icon">🌐</div><h3>Network</h3>
+  <div class="value" id="network">—</div>
+  <div class="small" id="chainid">Chain ID: —</div>
+ </div>
+ <div class="card">
+  <div class="icon">🧱</div><h3>Settled Block Height</h3>
+  <div class="value" id="height">—</div>
+  <div class="small">Confirmed by SqueekCore</div>
+ </div>
+ <div class="card">
+  <div class="icon">⚡</div><h3>Total Settled Work</h3>
+  <div class="value" id="work">—</div>
+  <div class="small">Cumulative work units</div>
+ </div>
+ <div class="card">
+  <div class="icon">🎯</div><h3>Network Difficulty</h3>
+  <div class="value" id="difficulty">—</div>
+  <div class="small">Work per 1,000 blocks</div>
+ </div>
 </div>
 
-<div class="card">
-<h3>Settled Block Height</h3>
-<div class="value" id="height">—</div>
-<div class="small">Confirmed by SqueekCore</div>
-<div class="change" id="heightChange">Waiting for comparison</div>
-</div>
-
-<div class="card">
-<h3>Total Settled Work</h3>
-<div class="value" id="work">—</div>
-<div class="small">Cumulative work units</div>
-<div class="change" id="workChange">Waiting for comparison</div>
-</div>
-
-<div class="card">
-<h3>Difficulty</h3>
-<div class="value" id="difficulty">—</div>
-<div class="small">Work per 1,000 blocks</div>
-</div>
-
-</div>
-
-<h2 class="section">Live Pipeline</h2>
-
+<h2 class="section">Live Device Metrics</h2>
 <div class="grid">
-
-<div class="card">
-<h3>Measurement</h3>
-<div class="value" id="measurement">—</div>
-<div class="small" id="measurementInfo">Waiting for data</div>
+ <div class="card">
+  <div class="icon">🔄</div><h3>Wheel Speed</h3>
+  <div class="value" id="rpm">—</div>
+  <div class="small">RPM</div>
+ </div>
+ <div class="card">
+  <div class="icon">🏃</div><h3>Running Speed</h3>
+  <div class="value" id="speed">—</div>
+  <div class="small">Kilometers per hour</div>
+ </div>
+ <div class="card">
+  <div class="icon">📍</div><h3>Daily Distance</h3>
+  <div class="value" id="distance">—</div>
+  <div class="small">Kilometers reported by device</div>
+ </div>
+ <div class="card">
+  <div class="icon">📊</div><h3>Measurement Status</h3>
+  <div class="value" id="freshness">—</div>
+  <div class="small" id="deviceState">Device state unavailable</div>
+ </div>
 </div>
 
-<div class="card">
-<h3>Builder</h3>
-<div class="value" id="builder">—</div>
-<div class="small" id="builderInfo">Waiting for data</div>
+<h2 class="section">Network Activity Analytics</h2>
+<div class="chart-grid">
+ <div class="chart-card">
+  <div class="chart-head">
+   <h3>Daily Work Activity</h3>
+   <select id="range" onchange="loadStats()">
+    <option value="7d">Last 7 Days</option>
+    <option value="30d">Last 30 Days</option>
+   </select>
+  </div>
+  <canvas id="workChart"></canvas>
+  <div class="chart-note" id="workNote">Waiting for statistics...</div>
+ </div>
+
+ <div class="chart-card">
+  <div class="chart-head"><h3>Daily Distance</h3><span class="muted">Kilometers</span></div>
+  <canvas id="distanceChart"></canvas>
+  <div class="chart-note" id="distanceNote">Waiting for statistics...</div>
+ </div>
+
+ <div class="chart-card" style="grid-column:1/-1">
+  <div class="chart-head"><h3>Typical Daily Activity</h3><span class="muted">48 half-hour periods · UTC</span></div>
+  <canvas id="hourChart"></canvas>
+  <div class="chart-note" id="hourNote">Average work activity by time of day</div>
+ </div>
 </div>
 
-<div class="card">
-<h3>Oracle</h3>
-<div class="value" id="oracle">—</div>
-<div class="small" id="oracleInfo">Waiting for data</div>
+<h2 class="section">Activity Summary</h2>
+<div class="stats-row">
+ <div class="card"><h3>Lifetime Accepted Work</h3><div class="value" id="lifeWork">—</div></div>
+ <div class="card"><h3>Settled Blocks</h3><div class="value" id="lifeBlocks">—</div></div>
+ <div class="card"><h3>Active Days</h3><div class="value" id="activeDays">—</div></div>
+ <div class="card"><h3>Observed Distance</h3><div class="value" id="lifeDistance">—</div></div>
+ <div class="card"><h3>Active Rounds</h3><div class="value" id="activeRounds">—</div></div>
+ <div class="card"><h3>Activity Coverage</h3><div class="value" id="coverage">—</div></div>
 </div>
 
-<div class="card">
-<h3>Settlement Queue</h3>
-<div class="value" id="queue">—</div>
-<div class="small" id="queueInfo">Waiting for data</div>
+<h2 class="section">Pipeline Monitor</h2>
+<div class="pipeline">
+ <div class="card">
+  <h3>Measurement</h3><div class="state" id="measurement">—</div>
+  <div class="small" id="measurementInfo">Waiting...</div>
+ </div>
+ <div class="card">
+  <h3>Builder</h3><div class="state" id="builder">—</div>
+  <div class="small" id="builderInfo">Waiting...</div>
+ </div>
+ <div class="card">
+  <h3>Oracle</h3><div class="state" id="oracle">—</div>
+  <div class="small" id="oracleInfo">Waiting...</div>
+ </div>
+ <div class="card">
+  <h3>Settlement Queue</h3><div class="state" id="queue">—</div>
+  <div class="small" id="queueInfo">Waiting...</div>
+ </div>
 </div>
 
+<h2 class="section">Block Progress</h2>
+<div class="card">
+ <div class="chart-head">
+  <div><h3>Next Block Projection</h3><div class="small">Projected progress is not a settled block</div></div>
+  <div class="value" id="blockProgress">—</div>
+ </div>
+ <div class="progress"><span id="progressBar"></span></div>
+ <div class="small" id="projectionInfo">Waiting for builder data...</div>
 </div>
 
 <h2 class="section">Provisional Blocks</h2>
-
 <div class="card">
-<div class="value" id="provisional">—</div>
-<div class="small" id="provisionalInfo">
-These blocks are not settled and have not issued SQK.
-</div>
+ <div class="value" id="provisional">—</div>
+ <div class="small" id="provisionalInfo">Provisional blocks are not settled and have not issued SQK.</div>
 </div>
 
 <h2 class="section">Recent Network Events</h2>
-
-<div class="card" id="events">
-<div class="small">Loading events...</div>
-</div>
+<div class="card" id="events"><div class="small">Loading events...</div></div>
 
 <footer>
 Data from api.squeekchain.com · Sepolia deployment<br>
 Independent community dashboard · Not an official Squeekchain product
 </footer>
-
 </main>
 
 <script>
 const API="https://api.squeekchain.com/v1";
 const $=id=>document.getElementById(id);
-
-let lastSuccess=null;
-let previousHeight=null;
-let previousWork=null;
-let loading=false;
-
-const val=x=>
- x===undefined||x===null?"Unavailable":String(x);
-
-const set=(id,x)=>$(id).textContent=val(x);
-
-function number(x){
- if(x===undefined||x===null)return "Unavailable";
- if(typeof x==="number"&&!Number.isFinite(x))return "Unavailable";
- return typeof x==="number"?x.toLocaleString():String(x);
-}
+const value=x=>x===undefined||x===null?"Unavailable":String(x);
+const put=(id,x)=>$(id).textContent=value(x);
+const number=x=>Number(x||0);
+const fmt=x=>Number(x).toLocaleString("en-US",{maximumFractionDigits:2});
+const km=mm=>fmt(number(mm)/1000000);
+const pct=x=>fmt(number(x)/100)+"%";
 
 async function get(path){
  const r=await fetch(API+path,{cache:"no-store"});
- if(!r.ok)throw new Error("HTTP "+r.status);
- const data=await r.json();
- lastSuccess=new Date();
- return data;
+ if(!r.ok)throw Error("HTTP "+r.status);
+ return r.json();
 }
 
-function updateLastSuccess(){
- set("lastSuccess","Last successful response: "+
- (lastSuccess?lastSuccess.toLocaleTimeString():"—"));
-}
-
-function compare(id,current,previous){
- const el=$(id);
- if(previous===null||current===null||
- previous===undefined||current===undefined){
-  el.textContent="First measurement recorded";
-  el.className="change";
-  return;
- }
- const diff=Number(current)-Number(previous);
- if(!Number.isFinite(diff)){
-  el.textContent="Comparison unavailable";
-  el.className="change";
- }else if(diff>0){
-  el.textContent="↑ Increased by "+number(diff);
-  el.className="change up";
- }else if(diff<0){
-  el.textContent="↓ Decreased by "+number(Math.abs(diff));
-  el.className="change down";
- }else{
-  el.textContent="No change since last update";
-  el.className="change";
- }
-}
-
-function statusText(x){
- return x==="available"?"Available":
- x==="unavailable"?"Unavailable":val(x);
+function setConnection(ok){
+ $("headStatus").textContent=ok?"API Connected":"API unavailable";
+ $("headDot").className=ok?"dot green":"dot red";
 }
 
 async function loadCore(){
  try{
   const d=await get("/core");
-
-  set("network",d.chain?.target||"—");
-  set("chainid","Chain ID: "+(d.chain?.chainId??"—"));
-
-  if(d.status==="available"&&d.core){
-   const h=d.core.blockHeight;
-   const w=d.core.cumulativeWork;
-
-   set("height",number(h));
-   set("work",number(w));
-   set("difficulty",number(d.core.workPerThousandBlocks));
-
-   compare("heightChange",h,previousHeight);
-   compare("workChange",w,previousWork);
-
-   if(h!==undefined&&h!==null)previousHeight=h;
-   if(w!==undefined&&w!==null)previousWork=w;
-
-  }else{
-   ["height","work","difficulty"].forEach(id=>set(id,"Unavailable"));
-   set("heightChange","Core data unavailable");
-   set("workChange","Core data unavailable");
+  put("network",d.chain?.target);
+  put("chainid","Chain ID: "+value(d.chain?.chainId));
+  if(d.status!=="available"){
+   ["height","work","difficulty"].forEach(id=>put(id,"Unavailable"));
+   return;
   }
-  return true;
-
+  put("height",fmt(d.core?.blockHeight));
+  put("work",fmt(d.core?.cumulativeWork));
+  put("difficulty",fmt(d.core?.workPerThousandBlocks));
  }catch(e){
-  ["network","chainid","height","work","difficulty"].forEach(id=>set(id,"API error"));
-  return false;
+  ["network","chainid","height","work","difficulty"].forEach(id=>put(id,"API error"));
  }
 }
 
@@ -243,52 +258,163 @@ async function loadStatus(){
  try{
   const d=await get("/status");
   const m=d.measurement||{};
+  put("rpm",m.rpmMilli==null?"Unavailable":fmt(m.rpmMilli/1000));
+  put("speed",m.speedMmPerSecond==null?"Unavailable":fmt(m.speedMmPerSecond*0.0036));
+  put("distance",m.distanceMm==null?"Unavailable":km(m.distanceMm));
+  put("freshness",m.freshness||"Unavailable");
+  put("deviceState",m.coreStatus||"Device state unavailable");
 
-  set("measurement",m.freshness||"Unavailable");
-  set("measurementInfo",m.coreStatus||"No device status");
+  put("measurement",m.freshness||"Unavailable");
+  put("measurementInfo",m.provenance||"No measurement provenance");
+  put("builder",d.builder?.status||"Unavailable");
+  put("builderInfo",d.builder?.reason||"Builder projection");
+  put("oracle",d.oracle?.state||"Unavailable");
+  put("oracleInfo",d.oracle?.reason||"Oracle validation");
+  put("queue",d.settlementQueue?.status||"Unavailable");
+  put("queueInfo",d.settlementQueue?.reason||"Settlement processing");
 
-  set("builder",statusText(d.builder?.status));
-  set("builderInfo",d.builder?.reason||"Pipeline projection");
-
-  set("oracle",d.oracle?.state||"Unavailable");
-  set("oracleInfo",d.oracle?.reason||"Oracle validation");
-
-  set("queue",statusText(d.settlementQueue?.status));
-  set("queueInfo",d.settlementQueue?.reason||"Settlement processing");
-
-  return true;
-
+  const progress=d.builder?.anchor?.blockProgress;
+  if(progress!==undefined&&progress!==null){
+   const p=Math.max(0,Math.min(100,number(progress)/10000000));
+   put("blockProgress",fmt(p)+"%");
+   $("progressBar").style.width=p+"%";
+  }else{
+   put("blockProgress","Unavailable");
+   $("progressBar").style.width="0%";
+  }
+  const projected=d.builder?.projected;
+  put("projectionInfo",projected?
+   "Projected completed blocks: "+value(projected.completedBlockCount):
+   "No projection available");
+  setConnection(true);
  }catch(e){
-  ["measurement","builder","oracle","queue"].forEach(id=>set(id,"Unavailable"));
-  ["measurementInfo","builderInfo","oracleInfo","queueInfo"]
-   .forEach(id=>set(id,"Could not load data"));
-  return false;
+  setConnection(false);
+ }
+}
+
+function drawChart(id,labels,values,kind){
+ const c=$(id),ctx=c.getContext("2d");
+ const w=c.clientWidth||300,h=220,dpr=window.devicePixelRatio||1;
+ c.width=w*dpr;c.height=h*dpr;
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ ctx.clearRect(0,0,w,h);
+
+ if(!values||!values.length){
+  ctx.fillStyle="#91a2c0";ctx.font="12px Arial";
+  ctx.textAlign="center";ctx.fillText("No chart data available",w/2,h/2);
+  return;
+ }
+ const clean=values.map(v=>Number(v)||0);
+ const max=Math.max(...clean,1);
+ const left=42,right=10,top=15,bottom=30;
+ const cw=w-left-right,ch=h-top-bottom;
+ ctx.font="10px Arial";ctx.textAlign="right";
+ for(let i=0;i<=4;i++){
+  const y=top+ch*i/4;
+  ctx.strokeStyle="#263651";ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();
+  ctx.fillStyle="#91a2c0";
+  ctx.fillText(fmt(max*(4-i)/4),left-7,y+3);
+ }
+ const step=cw/Math.max(clean.length,1);
+ if(kind==="bar"){
+  clean.forEach((v,i)=>{
+   const bh=(v/max)*ch;
+   const x=left+i*step+step*.18;
+   ctx.fillStyle="#6585ff";
+   ctx.beginPath();
+   ctx.roundRect(x,top+ch-bh,Math.max(2,step*.62),bh,3);
+   ctx.fill();
+  });
+ }else{
+  ctx.beginPath();
+  clean.forEach((v,i)=>{
+   const x=left+(i/(Math.max(clean.length-1,1)))*cw;
+   const y=top+ch-(v/max)*ch;
+   if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle="#39d5d0";ctx.lineWidth=2.5;ctx.stroke();
+  clean.forEach((v,i)=>{
+   const x=left+(i/(Math.max(clean.length-1,1)))*cw;
+   const y=top+ch-(v/max)*ch;
+   ctx.fillStyle="#39d5d0";ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();
+  });
+ }
+ ctx.fillStyle="#91a2c0";ctx.textAlign="center";
+ const count=Math.min(labels.length,6);
+ for(let i=0;i<count;i++){
+  const index=Math.round(i*(labels.length-1)/Math.max(count-1,1));
+  const x=left+(index/(Math.max(labels.length-1,1)))*cw;
+  ctx.fillText(String(labels[index]||"").slice(0,10),x,h-8);
+ }
+}
+
+async function loadStats(){
+ const range=$("range").value;
+ $("workNote").textContent="Loading statistics...";
+ $("distanceNote").textContent="Loading statistics...";
+ try{
+  const d=await get("/measurement/stats?range="+range);
+  const days=d.activity?.days||[];
+  if(!days.length)throw Error("No daily data");
+
+  const labels=days.map(x=>x.date||"");
+  const works=days.map(x=>number(x.observedWorkUnits));
+  const distances=days.map(x=>number(x.distanceMm)/1000000);
+
+  drawChart("workChart",labels,works,"bar");
+  drawChart("distanceChart",labels,distances,"bar");
+
+  $("workNote").textContent="Daily observed work units · "+range;
+  $("distanceNote").textContent="Daily observed distance in kilometers";
+
+  const typical=d.activity?.typicalDay||[];
+  if(typical.length){
+   const times=typical.map(x=>{
+    const mins=number(x.startMinuteUtc);
+    return String(Math.floor(mins/60)).padStart(2,"0")+":00";
+   });
+   const vals=typical.map(x=>number(x.meanWorkMilli));
+   drawChart("hourChart",times,vals,"line");
+   $("hourNote").textContent="Average activity by half-hour · UTC";
+  }else{
+   drawChart("hourChart",[],[],"line");
+  }
+
+  const life=d.lifetime||{};
+  put("lifeWork",fmt(life.acceptedWorkUnits));
+  put("lifeBlocks",fmt(life.settledBlockCount));
+  put("activeDays",fmt(life.activeDayCount));
+  put("lifeDistance",km(life.observedDistanceMm)+" km");
+
+  const rounds=d.rounds||{};
+  put("activeRounds",fmt(rounds.activeRoundCount));
+  put("coverage",rounds.activeRateBps==null?
+   pct(d.activity?.coverage?.coverageBps):pct(rounds.activeRateBps));
+ }catch(e){
+  ["workChart","distanceChart","hourChart"].forEach(id=>drawChart(id,[],[],"bar"));
+  $("workNote").textContent="Statistics unavailable: "+e.message;
+  $("distanceNote").textContent="No verified distance history";
+  $("hourNote").textContent="No verified hourly history";
  }
 }
 
 async function loadBlocks(){
  try{
   const d=await get("/measurement/blocks");
-
   if(d.status==="unavailable"){
-   set("provisional","Unavailable");
-   set("provisionalInfo",d.reason||"Projection unavailable");
-   return true;
+   put("provisional","Unavailable");
+   put("provisionalInfo",d.reason||"Projection unavailable");
+   return;
   }
-
   const blocks=d.blocks||[];
-  set("provisional",number(blocks.length));
-
-  set("provisionalInfo",blocks.length?
-   "Latest provisional block: "+number(blocks[blocks.length-1].height):
+  put("provisional",blocks.length);
+  put("provisionalInfo",blocks.length?
+   "Latest provisional block: "+value(blocks[blocks.length-1].height):
    "No provisional blocks reported. These are not settled blocks.");
-
-  return true;
-
  }catch(e){
-  set("provisional","Unavailable");
-  set("provisionalInfo","Could not load provisional blocks");
-  return false;
+  put("provisional","Unavailable");
+  put("provisionalInfo","Could not load provisional blocks");
  }
 }
 
@@ -296,111 +422,44 @@ async function loadEvents(){
  try{
   const d=await get("/events?category=all&limit=10");
   const box=$("events");
-
-  if(d.status==="unavailable"){
-   box.textContent="Event feed unavailable";
-   return true;
-  }
-
-  if(!d.events?.length){
-   box.textContent="No events available";
-   return true;
-  }
-
   box.replaceChildren();
-
+  if(d.status==="unavailable"||!d.events?.length){
+   box.textContent="Event feed unavailable or empty";
+   return;
+  }
   d.events.forEach(ev=>{
    const item=document.createElement("div");
    item.className="event";
-
-   const name=document.createElement("strong");
-   name.textContent=ev.type||"Network event";
-
+   const title=document.createElement("strong");
+   title.textContent=ev.type||"Network event";
    const date=document.createElement("div");
    date.className="small";
    date.textContent=ev.occurredAt?
     new Date(ev.occurredAt).toLocaleString():"Time unavailable";
-
-   item.append(name,date);
+   item.append(title,date);
    box.append(item);
   });
-
-  return true;
-
  }catch(e){
   $("events").textContent="Event feed unavailable";
-  return false;
  }
 }
 
-async function loadAll(){
- if(loading)return;
- loading=true;
- $("refresh").disabled=true;
- $("updated").textContent="Updating...";
-
- try{
-  const results=await Promise.all([
-   loadCore(),loadStatus(),loadBlocks(),loadEvents()
-  ]);
-
-  const success=results.filter(Boolean).length;
-
-  if(success===4){
-   $("connection").textContent="API Connected";
-   $("connection").className="status ok";
-   $("warning").style.display="none";
-  }else if(success>0){
-   $("connection").textContent="Partial API";
-   $("connection").className="status bad";
-   $("warning").textContent=
-    "Some API endpoints did not respond. Some information may be unavailable.";
-   $("warning").style.display="block";
-  }else{
-   $("connection").textContent="API Offline";
-   $("connection").className="status bad";
-   $("warning").textContent=
-    "No API endpoint responded. Check your internet connection or try again later.";
-   $("warning").style.display="block";
-  }
-
-  updateLastSuccess();
-  $("updated").textContent="Last check: "+new Date().toLocaleTimeString();
-
- }finally{
-  loading=false;
-  $("refresh").disabled=false;
- }
+async function refreshLive(){
+ $("updated").textContent="Updating live network data...";
+ await Promise.all([loadCore(),loadStatus()]);
+ $("updated").textContent="Last update: "+new Date().toLocaleTimeString();
 }
 
-async function copyReport(){
- const report=[
-  "Squeekchain Network Report",
-  "Network: "+$("network").textContent,
-  $("chainid").textContent,
-  "Settled Blocks: "+$("height").textContent,
-  "Total Settled Work: "+$("work").textContent,
-  "Difficulty: "+$("difficulty").textContent,
-  "Measurement: "+$("measurement").textContent,
-  "Builder: "+$("builder").textContent,
-  "Oracle: "+$("oracle").textContent,
-  "Settlement Queue: "+$("queue").textContent,
-  "Provisional Blocks: "+$("provisional").textContent,
-  "API Status: "+$("connection").textContent,
-  $("lastSuccess").textContent
- ].join("\n");
-
- try{
-  await navigator.clipboard.writeText(report);
-  $("updated").textContent="Report copied successfully";
- }catch(e){
-  $("updated").textContent="Copy unavailable. Use HTTPS browser.";
- }
+async function init(){
+ await Promise.all([refreshLive(),loadStats(),loadBlocks(),loadEvents()]);
 }
-
-loadAll();
-setInterval(loadAll,30000);
+init();
+setInterval(refreshLive,15000);
+setInterval(()=>Promise.all([loadBlocks(),loadEvents()]),60000);
+window.addEventListener("resize",()=>{
+ // Charts are redrawn when the page size changes using the last loaded data.
+ loadStats();
+});
 </script>
-
 </body>
 </html>
