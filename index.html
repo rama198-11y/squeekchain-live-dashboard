@@ -3,64 +3,173 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Squeekchain Monitor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d1b">
+<title>Squeekchain | Network Monitor</title>
 
 <style>
+:root{
+ --bg:#080d1b;
+ --panel:#111a2e;
+ --panel2:#16223a;
+ --line:#263653;
+ --text:#edf3ff;
+ --muted:#8c9bb8;
+ --blue:#6388ff;
+ --cyan:#42d9ee;
+ --green:#45dfa0;
+ --red:#ff7189;
+ --purple:#a78bfa;
+}
 *{box-sizing:border-box}
 body{
- margin:0;background:#0b1020;color:#edf2ff;
- font-family:Arial,sans-serif
+ margin:0;background:
+ radial-gradient(ellipse at 15% 0%,#192b50 0,transparent 38%),
+ radial-gradient(ellipse at 90% 20%,#20204a 0,transparent 32%),
+ var(--bg);
+ color:var(--text);
+ font-family:Arial,sans-serif;
+ min-height:100vh;
 }
 header{
- padding:22px 18px;background:#121a30;
- border-bottom:1px solid #293653
-}
-h1{font-size:22px;margin:0 0 7px}
-.sub,.small{color:#9eacc8;font-size:12px}
-main{max-width:700px;margin:auto;padding:18px}
-.top{
+ max-width:1100px;margin:auto;padding:25px 20px 18px;
  display:flex;justify-content:space-between;
- align-items:center;gap:12px;margin-bottom:22px
+ align-items:center;gap:15px;flex-wrap:wrap
 }
-.status{
- padding:7px 11px;border-radius:20px;
- background:#293653;font-size:12px
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+ width:44px;height:44px;border-radius:14px;
+ display:grid;place-items:center;font-size:23px;
+ background:linear-gradient(135deg,#526fff,#9b69ed);
+ box-shadow:0 5px 25px #647dff45
 }
-.ok{color:#67e5a2}
-.bad{color:#ff9c9c}
+h1{font-size:21px;margin:0 0 5px}
+.subtitle{font-size:12px;color:var(--muted)}
+.header-right{display:flex;align-items:center;gap:10px}
+.live{
+ display:flex;align-items:center;gap:8px;
+ border:1px solid #284c45;background:#102c2b;
+ color:var(--green);padding:9px 12px;
+ border-radius:30px;font-size:12px
+}
+.dot{
+ width:8px;height:8px;border-radius:50%;
+ background:var(--green);box-shadow:0 0 10px var(--green)
+}
+main{max-width:1100px;margin:auto;padding:10px 20px 30px}
+.toolbar{
+ display:flex;justify-content:space-between;
+ align-items:center;gap:12px;flex-wrap:wrap;
+ margin:10px 0 22px
+}
+.meta{font-size:12px;color:var(--muted)}
 button{
- background:#536dfe;color:white;border:0;
- padding:11px 16px;border-radius:9px;font-weight:bold
+ border:1px solid #526dba;background:#253b70;
+ color:white;padding:10px 16px;border-radius:10px;
+ font-weight:bold;cursor:pointer
 }
-h2{font-size:16px;margin:24px 0 12px}
+button:disabled{opacity:.5}
+button:hover{background:#34519a}
+.section-title{
+ font-size:15px;font-weight:bold;
+ margin:26px 0 13px;display:flex;
+ align-items:center;gap:9px
+}
+.section-title:before{
+ content:"";width:4px;height:17px;
+ border-radius:5px;background:var(--blue)
+}
+.network-banner{
+ display:flex;justify-content:space-between;
+ align-items:center;gap:15px;flex-wrap:wrap;
+ padding:20px;background:linear-gradient(110deg,#172b4b,#202449);
+ border:1px solid #344c75;border-radius:16px;
+ margin-bottom:15px
+}
+.network-name{font-size:24px;font-weight:bold;margin-bottom:6px}
+.network-label{font-size:12px;color:var(--muted)}
+.chain{
+ padding:9px 13px;background:#111c34;
+ border:1px solid #394b71;border-radius:10px;
+ font-size:12px;color:#c4d2f4
+}
 .grid{
- display:grid;grid-template-columns:repeat(2,1fr);
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
  gap:12px
 }
 .card{
- background:#151e34;border:1px solid #293653;
- border-radius:13px;padding:17px;min-width:0
+ min-width:0;background:linear-gradient(145deg,#17233a,#111a2c);
+ border:1px solid var(--line);border-radius:15px;
+ padding:17px;position:relative;overflow:hidden
 }
-.card h3{
- font-size:12px;color:#9eacc8;
- font-weight:normal;margin:0 0 12px
+.card:after{
+ content:"";position:absolute;right:-25px;top:-35px;
+ width:85px;height:85px;border-radius:50%;
+ background:#6c8aff0c
 }
-.value{
- font-size:24px;font-weight:bold;
- overflow-wrap:anywhere
+.card-label{
+ color:var(--muted);font-size:12px;
+ margin-bottom:14px
 }
-.events .event{
- padding:13px 0;border-bottom:1px solid #293653;
- font-size:13px
+.card-value{
+ font-size:25px;font-weight:bold;
+ overflow-wrap:anywhere;letter-spacing:-.5px
+}
+.card-note{font-size:11px;color:var(--muted);margin-top:9px}
+.icon{
+ width:30px;height:30px;border-radius:9px;
+ display:grid;place-items:center;margin-bottom:12px;
+ background:#263d6b;color:#9db8ff;font-size:15px
+}
+.pipeline{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:12px
+}
+.pipe{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:13px;padding:15px
+}
+.pipe-head{display:flex;justify-content:space-between;align-items:center}
+.pipe-name{font-size:12px;color:var(--muted)}
+.pipe-value{font-size:16px;font-weight:bold;margin-top:12px}
+.pipe-note{font-size:11px;color:var(--muted);margin-top:7px;overflow-wrap:anywhere}
+.pip{width:8px;height:8px;border-radius:50%;background:#8491aa}
+.pip.good{background:var(--green);box-shadow:0 0 9px #45dfa080}
+.pip.bad{background:var(--red)}
+.provisional{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px;background:var(--panel);border:1px solid var(--line);
+ border-radius:14px;padding:18px
+}
+.provisional .number{font-size:27px;font-weight:bold}
+.events{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px 17px}
+.event{
+ display:flex;gap:13px;align-items:flex-start;
+ padding:15px 0;border-bottom:1px solid #263653
 }
 .event:last-child{border:0}
-footer{
- text-align:center;color:#7f8eaa;
- padding:25px 10px;font-size:11px
+.event-icon{
+ width:30px;height:30px;flex-shrink:0;
+ display:grid;place-items:center;border-radius:9px;
+ background:#263b65;color:#9bb5ff;font-size:13px
 }
-@media(max-width:480px){
- .value{font-size:21px}
+.event-name{font-size:12px;font-weight:bold;overflow-wrap:anywhere}
+.event-date{font-size:11px;color:var(--muted);margin-top:6px}
+.empty{font-size:12px;color:var(--muted);padding:16px 0}
+footer{
+ text-align:center;color:#657591;font-size:11px;
+ padding:28px 10px;line-height:1.8
+}
+@media(max-width:760px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pipeline{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:400px){
+ main{padding-left:13px;padding-right:13px}
+ header{padding-left:13px;padding-right:13px}
+ .card{padding:13px}
+ .card-value{font-size:21px}
+ .network-name{font-size:21px}
 }
 </style>
 </head>
@@ -68,57 +177,131 @@ footer{
 <body>
 
 <header>
-<h1>🐭 Squeekchain Monitor</h1>
-<div class="sub">Simple Live Network Dashboard</div>
+ <div class="brand">
+  <div class="logo">🐭</div>
+  <div>
+   <h1>Squeekchain Monitor</h1>
+   <div class="subtitle">Live Network Intelligence</div>
+  </div>
+ </div>
+ <div class="header-right">
+  <div class="live" id="liveStatus">
+   <span class="dot" id="liveDot"></span>
+   <span id="liveText">CONNECTING</span>
+  </div>
+ </div>
 </header>
 
 <main>
 
-<div class="top">
-<div>
- <span class="status" id="connection">Connecting...</span>
- <div class="small" id="updated">Waiting for API...</div>
-</div>
-<button onclick="loadAll()">↻ Refresh</button>
+<div class="toolbar">
+ <div class="meta" id="updated">Waiting for network data...</div>
+ <button id="refresh" onclick="loadAll()">↻ Refresh</button>
 </div>
 
-<h2>Network Status</h2>
+<div class="network-banner">
+ <div>
+  <div class="network-label">CONNECTED NETWORK</div>
+  <div class="network-name" id="network">—</div>
+  <div class="network-label">Squeekchain Public Network</div>
+ </div>
+ <div class="chain" id="chainid">Chain ID: —</div>
+</div>
+
+<div class="section-title">Network Overview</div>
 
 <div class="grid">
+ <div class="card">
+  <div class="icon">▣</div>
+  <div class="card-label">Settled Blocks</div>
+  <div class="card-value" id="height">—</div>
+  <div class="card-note">Confirmed by SqueekCore</div>
+ </div>
 
-<div class="card">
-<h3>Network</h3>
-<div class="value" id="network">—</div>
-<div class="small" id="chainid">Chain ID: —</div>
+ <div class="card">
+  <div class="icon">◈</div>
+  <div class="card-label">Total Settled Work</div>
+  <div class="card-value" id="work">—</div>
+  <div class="card-note">Cumulative work units</div>
+ </div>
+
+ <div class="card">
+  <div class="icon">⚡</div>
+  <div class="card-label">Network Difficulty</div>
+  <div class="card-value" id="difficulty">—</div>
+  <div class="card-note">Work per 1,000 blocks</div>
+ </div>
+
+ <div class="card">
+  <div class="icon">◉</div>
+  <div class="card-label">API Connection</div>
+  <div class="card-value" id="apiStatus">—</div>
+  <div class="card-note">Public API response</div>
+ </div>
 </div>
 
-<div class="card">
-<h3>Confirmed Blocks</h3>
-<div class="value" id="height">—</div>
+<div class="section-title">Live Pipeline</div>
+
+<div class="pipeline">
+ <div class="pipe">
+  <div class="pipe-head">
+   <span class="pipe-name">Measurement</span>
+   <span class="pip" id="measurementDot"></span>
+  </div>
+  <div class="pipe-value" id="measurement">—</div>
+  <div class="pipe-note" id="measurementInfo">Waiting for data</div>
+ </div>
+
+ <div class="pipe">
+  <div class="pipe-head">
+   <span class="pipe-name">Builder</span>
+   <span class="pip" id="builderDot"></span>
+  </div>
+  <div class="pipe-value" id="builder">—</div>
+  <div class="pipe-note" id="builderInfo">Waiting for data</div>
+ </div>
+
+ <div class="pipe">
+  <div class="pipe-head">
+   <span class="pipe-name">Oracle</span>
+   <span class="pip" id="oracleDot"></span>
+  </div>
+  <div class="pipe-value" id="oracle">—</div>
+  <div class="pipe-note" id="oracleInfo">Waiting for data</div>
+ </div>
+
+ <div class="pipe">
+  <div class="pipe-head">
+   <span class="pipe-name">Settlement Queue</span>
+   <span class="pip" id="queueDot"></span>
+  </div>
+  <div class="pipe-value" id="queue">—</div>
+  <div class="pipe-note" id="queueInfo">Waiting for data</div>
+ </div>
 </div>
 
-<div class="card">
-<h3>Total Settled Work</h3>
-<div class="value" id="work">—</div>
+<div class="section-title">Provisional Blocks</div>
+
+<div class="provisional">
+ <div>
+  <div class="card-label">Unsettled Blocks</div>
+  <div class="number" id="provisional">—</div>
+  <div class="card-note" id="provisionalInfo">
+   Waiting for block data
+  </div>
+ </div>
+ <div class="icon">◫</div>
 </div>
 
-<div class="card">
-<h3>API Connection</h3>
-<div class="value ok" id="api">—</div>
-<div class="small">Public API status</div>
-</div>
+<div class="section-title">Recent Network Events</div>
 
-</div>
-
-<h2>Recent Network Events</h2>
-
-<div class="card events" id="events">
-<div class="small">Loading events...</div>
+<div class="events" id="events">
+ <div class="empty">Loading network events...</div>
 </div>
 
 <footer>
-Data: api.squeekchain.com<br>
-Independent community dashboard
+ Data provided by api.squeekchain.com<br>
+ Independent Community Dashboard · Not an official Squeekchain product
 </footer>
 
 </main>
@@ -132,39 +315,105 @@ function set(id,value){
  value===undefined||value===null?"Unavailable":String(value);
 }
 
+function number(value){
+ if(value===undefined||value===null)return "Unavailable";
+ if(typeof value==="number"&&!Number.isFinite(value))return "Unavailable";
+ return typeof value==="number"?value.toLocaleString():String(value);
+}
+
 async function get(path){
  const response=await fetch(API+path,{cache:"no-store"});
- if(!response.ok) throw new Error("API error");
- return response.json();
+ if(!response.ok)throw new Error("HTTP "+response.status);
+ return await response.json();
+}
+
+function pipeline(id,dotId,value,info){
+ set(id,value);
+ set(dotId,"");
+ $(dotId).className="pip";
+
+ const v=String(value||"").toLowerCase();
+ if(["available","accepted","online","fresh"].includes(v)){
+  $(dotId).className="pip good";
+ }else if(["unavailable","offline","rejected","stale","error"].includes(v)){
+  $(dotId).className="pip bad";
+ }
 }
 
 async function loadCore(){
  try{
   const d=await get("/core");
 
-  $("connection").textContent="API Connected";
-  $("connection").className="status ok";
-  set("api","Online");
-
   set("network",d.chain?.target);
   set("chainid","Chain ID: "+(d.chain?.chainId??"Unavailable"));
 
-  if(d.status==="available"){
-   set("height",d.core?.blockHeight);
-   set("work",d.core?.cumulativeWork);
+  if(d.status==="available"&&d.core){
+   set("height",number(d.core.blockHeight));
+   set("work",number(d.core.cumulativeWork));
+   set("difficulty",number(d.core.workPerThousandBlocks));
   }else{
-   set("height","Unavailable");
-   set("work","Unavailable");
+   ["height","work","difficulty"].forEach(id=>set(id,"Unavailable"));
+  }
+  return true;
+ }catch(e){
+  ["network","chainid","height","work","difficulty"].forEach(id=>set(id,"Unavailable"));
+  return false;
+ }
+}
+
+async function loadStatus(){
+ try{
+  const d=await get("/status");
+  const m=d.measurement||{};
+
+  pipeline("measurement","measurementDot",
+   m.freshness??"Unavailable",m.coreStatus);
+  set("measurementInfo",m.coreStatus??"No device status");
+
+  pipeline("builder","builderDot",
+   d.builder?.status??"Unavailable");
+  set("builderInfo",d.builder?.reason??"No additional information");
+
+  pipeline("oracle","oracleDot",
+   d.oracle?.state??"Unavailable");
+  set("oracleInfo",d.oracle?.reason??"No additional information");
+
+  pipeline("queue","queueDot",
+   d.settlementQueue?.status??"Unavailable");
+  set("queueInfo",d.settlementQueue?.reason??"No additional information");
+
+  return true;
+ }catch(e){
+  ["measurement","builder","oracle","queue"].forEach(id=>{
+   pipeline(id,id+"Dot","Unavailable");
+   set(id+"Info","Could not load status");
+  });
+  return false;
+ }
+}
+
+async function loadBlocks(){
+ try{
+  const d=await get("/measurement/blocks");
+
+  if(d.status==="unavailable"){
+   set("provisional","Unavailable");
+   set("provisionalInfo",d.reason??"Projection unavailable");
+   return true;
   }
 
+  const blocks=Array.isArray(d.blocks)?d.blocks:[];
+  set("provisional",number(blocks.length));
+
+  set("provisionalInfo",blocks.length?
+   "Latest provisional block: "+number(blocks[blocks.length-1].height):
+   "No provisional blocks reported");
+  return true;
+
  }catch(e){
-  $("connection").textContent="API Offline";
-  $("connection").className="status bad";
-  set("api","Offline");
-  set("height","Unavailable");
-  set("work","Unavailable");
-  set("network","Unavailable");
-  set("chainid","Connection failed");
+  set("provisional","Unavailable");
+  set("provisionalInfo","Could not load block data");
+  return false;
  }
 }
 
@@ -174,30 +423,42 @@ async function loadEvents(){
   const box=$("events");
   box.replaceChildren();
 
-  if(!d.events?.length){
-   box.textContent="No recent events";
-   return;
+  if(!Array.isArray(d.events)||!d.events.length){
+   box.textContent="No recent events available";
+   box.className="events empty";
+   return true;
   }
+
+  box.className="events";
 
   d.events.forEach(ev=>{
    const item=document.createElement("div");
    item.className="event";
 
-   const name=document.createElement("strong");
-   name.textContent=ev.type||"Network event";
+   const icon=document.createElement("div");
+   icon.className="event-icon";
+   icon.textContent="↗";
+
+   const content=document.createElement("div");
+   const name=document.createElement("div");
+   name.className="event-name";
+   name.textContent=ev.type??"Network event";
 
    const date=document.createElement("div");
-   date.className="small";
+   date.className="event-date";
    date.textContent=ev.occurredAt?
-    new Date(ev.occurredAt).toLocaleString():
-    "Time unavailable";
+    new Date(ev.occurredAt).toLocaleString():"Time unavailable";
 
-   item.append(name,date);
+   content.append(name,date);
+   item.append(icon,content);
    box.append(item);
   });
 
+  return true;
  }catch(e){
   $("events").textContent="Event feed unavailable";
+  $("events").className="events empty";
+  return false;
  }
 }
 
@@ -206,15 +467,28 @@ let loading=false;
 async function loadAll(){
  if(loading)return;
  loading=true;
- $("updated").textContent="Updating...";
+ $("refresh").disabled=true;
+ $("updated").textContent="Updating network data...";
 
- try{
-  await Promise.all([loadCore(),loadEvents()]);
-  $("updated").textContent=
-   "Last update: "+new Date().toLocaleTimeString();
- }finally{
-  loading=false;
- }
+ const results=await Promise.all([
+  loadCore(),loadStatus(),loadBlocks(),loadEvents()
+ ]);
+
+ const connected=results.some(Boolean);
+
+ $("liveText").textContent=connected?"API CONNECTED":"API OFFLINE";
+ $("liveDot").style.background=connected?"var(--green)":"var(--red)";
+ $("liveDot").style.boxShadow=connected?
+  "0 0 10px var(--green)":"0 0 10px var(--red)";
+
+ set("apiStatus",connected?"Online":"Offline");
+ $("apiStatus").style.color=connected?"var(--green)":"var(--red)";
+
+ $("updated").textContent=
+  "Last update: "+new Date().toLocaleTimeString();
+
+ loading=false;
+ $("refresh").disabled=false;
 }
 
 loadAll();
