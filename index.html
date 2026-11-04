@@ -1,1 +1,225 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Squeekchain Live Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1020;color:#edf2ff;font-family:Arial,sans-serif}
+header{padding:24px 18px;background:#121a30;border-bottom:1px solid #27324c}
+h1{font-size:23px;margin:0 0 8px}
+.sub{color:#9eacc8;font-size:13px}
+main{max-width:950px;margin:auto;padding:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+button{background:#536dfe;color:white;border:0;padding:11px 16px;border-radius:9px;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:#151e34;border:1px solid #293653;border-radius:13px;padding:16px;min-width:0}
+.card h3{font-size:13px;color:#9eacc8;margin:0 0 13px;font-weight:normal}
+.value{font-size:23px;font-weight:bold;overflow-wrap:anywhere}
+.small{font-size:12px;color:#9eacc8;margin-top:8px;overflow-wrap:anywhere}
+.section{margin:24px 0 12px;font-size:17px}
+.status{display:inline-block;padding:5px 9px;border-radius:20px;background:#293653;font-size:12px}
+.ok{color:#67e5a2}.bad{color:#ff9c9c}
+.event{padding:12px 0;border-bottom:1px solid #293653;font-size:13px}
+.event:last-child{border:0}
+footer{text-align:center;color:#7f8eaa;padding:25px;font-size:12px}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.value{font-size:21px}}
+</style>
+</head>
+<body>
+<header>
+<h1>🐭 Squeekchain Dashboard</h1>
+<div class="sub">Live Network Monitor · Official Public API</div>
+</header>
+
+<main>
+<div class="top">
+<div>
+<span class="status" id="connection">Connecting...</span>
+<div class="small" id="updated">Waiting for API...</div>
+</div>
+<button onclick="loadAll()">↻ Refresh</button>
+</div>
+
+<h2 class="section">Network Overview</h2>
+<div class="grid">
+<div class="card">
+<h3>Network</h3>
+<div class="value" id="network">—</div>
+<div class="small" id="chainid">Chain ID: —</div>
+</div>
+<div class="card">
+<h3>Settled Block Height</h3>
+<div class="value" id="height">—</div>
+<div class="small">Confirmed by SqueekCore</div>
+</div>
+<div class="card">
+<h3>Total Settled Work</h3>
+<div class="value" id="work">—</div>
+<div class="small">Cumulative work units</div>
+</div>
+<div class="card">
+<h3>Difficulty</h3>
+<div class="value" id="difficulty">—</div>
+<div class="small">Work per 1,000 blocks</div>
+</div>
+</div>
+
+<h2 class="section">Live Pipeline</h2>
+<div class="grid">
+<div class="card">
+<h3>Measurement</h3>
+<div class="value" id="measurement">—</div>
+<div class="small" id="measurementInfo">Waiting for data</div>
+</div>
+<div class="card">
+<h3>Builder</h3>
+<div class="value" id="builder">—</div>
+<div class="small" id="builderInfo">Waiting for data</div>
+</div>
+<div class="card">
+<h3>Oracle</h3>
+<div class="value" id="oracle">—</div>
+<div class="small" id="oracleInfo">Waiting for data</div>
+</div>
+<div class="card">
+<h3>Settlement Queue</h3>
+<div class="value" id="queue">—</div>
+<div class="small" id="queueInfo">Waiting for data</div>
+</div>
+</div>
+
+<h2 class="section">Provisional Blocks</h2>
+<div class="card">
+<div class="value" id="provisional">—</div>
+<div class="small" id="provisionalInfo">
+These blocks are not settled and have not issued SQK.
+</div>
+</div>
+
+<h2 class="section">Recent Network Events</h2>
+<div class="card" id="events">
+<div class="small">Loading events...</div>
+</div>
+
+<footer>
+Data from api.squeekchain.com · Sepolia deployment<br>
+Independent community dashboard · Not an official Squeekchain product
+</footer>
+</main>
+
+<script>
+const API="https://api.squeekchain.com/v1";
+const $=id=>document.getElementById(id);
+const val=(x)=>x===undefined||x===null?"Unavailable":String(x);
+const statusText=(x)=>x==="available"?"Available":x==="unavailable"?"Unavailable":val(x);
+const set=(id,x)=>$(id).textContent=val(x);
+
+async function get(path){
+ const r=await fetch(API+path,{cache:"no-store"});
+ if(!r.ok) throw new Error("HTTP "+r.status);
+ return await r.json();
+}
+
+async function loadCore(){
+ try{
+  const d=await get("/core");
+  set("network",d.chain?.target||"—");
+  set("chainid", "Chain ID: "+(d.chain?.chainId||"—"));
+  if(d.status==="available"){
+   set("height",d.core?.blockHeight);
+   set("work",d.core?.cumulativeWork);
+   set("difficulty",d.core?.workPerThousandBlocks);
+  }else{
+   ["height","work","difficulty"].forEach(id=>set(id,"Unavailable"));
+  }
+ }catch(e){
+  ["network","chainid","height","work","difficulty"].forEach(id=>set(id,"API error"));
+ }
+}
+
+async function loadStatus(){
+ try{
+  const d=await get("/status");
+  const m=d.measurement||{};
+  set("measurement",m.freshness||"Unavailable");
+  set("measurementInfo",m.coreStatus||"No device status");
+  set("builder",statusText(d.builder?.status));
+  set("builderInfo",d.builder?.reason||"Pipeline projection");
+  set("oracle",d.oracle?.state||"Unavailable");
+  set("oracleInfo",d.oracle?.reason||"Oracle validation");
+  set("queue",statusText(d.settlementQueue?.status));
+  set("queueInfo",d.settlementQueue?.reason||"Settlement processing");
+  $("connection").textContent="API Connected";
+  $("connection").className="status ok";
+ }catch(e){
+  $("connection").textContent="API unavailable";
+  $("connection").className="status bad";
+  ["measurement","builder","oracle","queue"].forEach(id=>set(id,"Unavailable"));
+ }
+}
+
+async function loadBlocks(){
+ try{
+  const d=await get("/measurement/blocks");
+  if(d.status==="unavailable"){
+   set("provisional","Unavailable");
+   set("provisionalInfo",d.reason||"Projection unavailable");
+   return;
+  }
+  const blocks=d.blocks||[];
+  set("provisional",blocks.length);
+  set("provisionalInfo",blocks.length?
+   "Latest provisional block: "+blocks[blocks.length-1].height:
+   "No provisional blocks reported. These are not settled blocks.");
+ }catch(e){
+  set("provisional","Unavailable");
+  set("provisionalInfo","Could not load provisional blocks");
+ }
+}
+
+async function loadEvents(){
+ try{
+  const d=await get("/events?category=all&limit=10");
+  const box=$("events");
+  if(d.status==="unavailable"){
+   box.textContent="Event feed unavailable";
+   return;
+  }
+  if(!d.events?.length){
+   box.textContent="No events available";
+   return;
+  }
+  box.innerHTML="";
+  d.events.forEach(ev=>{
+   const item=document.createElement("div");
+   item.className="event";
+   const name=document.createElement("strong");
+   name.textContent=ev.type||"Network event";
+   const date=document.createElement("div");
+   date.className="small";
+   date.textContent=ev.occurredAt?
+    new Date(ev.occurredAt).toLocaleString():"Time unavailable";
+   item.append(name,date);
+   box.append(item);
+  });
+ }catch(e){
+  $("events").textContent="Event feed unavailable";
+ }
+}
+
+async function loadAll(){
+ $("updated").textContent="Updating...";
+ await Promise.all([loadCore(),loadStatus(),loadBlocks(),loadEvents()]);
+ $("updated").textContent="Last update: "+new Date().toLocaleTimeString();
+}
+
+loadAll();
+setInterval(()=>Promise.all([loadCore(),loadStatus()]),15000);
+setInterval(()=>Promise.all([loadBlocks(),loadEvents()]),60000);
+</script>
+</body>
+</html>
